@@ -1,6 +1,12 @@
-import 'package:clock_app/home_page/view/clock_view.dart';
+import 'package:clock_app/home_page/constants/theme_data.dart';
+import 'package:clock_app/home_page/view/alarm_clock.dart';
+import 'package:clock_app/home_page/view/clock_page.dart';
+import 'package:clock_app/home_page/view/enum.dart';
+import 'package:clock_app/home_page/view/menu_info.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
+import 'data.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({Key? key}) : super(key: key);
@@ -12,78 +18,79 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
-    var now = DateTime.now();
-    var formattedTime = DateFormat('HH:mm').format(now);
-    var formattedDate = DateFormat('EEE, d MMM').format(now);
-    var timezoneString = now.timeZoneOffset.toString().split('.').first;
-    var offsetSign = '';
-    if (!timezoneString.startsWith('-')) offsetSign = '+';
-    print(timezoneString);
-
     return Scaffold(
       backgroundColor: Color(0xFF2D2F41),
       body: Row(
         children: [
-          /*Column(
+          Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FlatButton(
-                  onPressed: () {},
-                  child: Column(
-                    children: [
-                      FlutterLogo(),
-                      Text(
-                        'Clock',
-                        style: TextStyle(color: Colors.white, fontSize: 14.0),
-                      )
-                    ],
-                  ))
-            ],
-          ),*/
-          /*VerticalDivider(
+            children: menuItems
+                .map((currentMenuInfo) => buildMenuButton(currentMenuInfo))
+                .toList(),
+          ),
+          VerticalDivider(
             color: Colors.white54,
             width: 1,
-          ),*/
-          Flexible(
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 64),
-              child:
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                Text(
-                  'Clock',
-                  style: TextStyle(color: Colors.white, fontSize: 24),
-                ),
-                SizedBox(height: 32.0,),
-                Text(
-                  formattedTime,
-                  style: TextStyle(color: Colors.white, fontSize: 64),
-                ),
-                Text(
-                  formattedDate,
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                ClockView(),
-                Text(
-                  'Timezone',
-                  style: TextStyle(color: Colors.white, fontSize: 24),
-                ),
-                SizedBox(height: 16.0,),
-                Row(
-                  children: [
-                    Icon(Icons.language, color: Colors.white),
-                    Text(
-                      'UTC' + offsetSign + timezoneString,
-                      style: TextStyle(color: Colors.white, fontSize: 24),
-                    ),
-                  ],
-                ),
-              ]),
+          ),
+          Expanded(
+            child: Consumer<MenuInfo>(
+              builder: (BuildContext context, value, Widget? child) {
+                if (value.menuType == MenuType.clock)
+                  return ClockPage();
+                else if (value.menuType == MenuType.alarm)
+                  return AlarmPage();
+                else
+                  return Container(
+                      child: RichText(
+                    text: TextSpan(
+                        style: TextStyle(fontSize: 20),
+                        children: <TextSpan>[
+                          TextSpan(text: 'Upcoming Tutorial\n'),
+                          TextSpan(
+                              text: value.title,
+                              style: TextStyle(fontSize: 48.0))
+                        ]),
+                  ));
+              },
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget buildMenuButton(MenuInfo currentMenuInfo) {
+    return Consumer<MenuInfo>(
+      builder: (BuildContext context, value, Widget? child) {
+        return FlatButton(
+            shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.only(topRight: Radius.circular(32.0))),
+            padding:
+                const EdgeInsets.symmetric(vertical: 16.0, horizontal: 0.0),
+            color: currentMenuInfo.menuType == value.menuType
+                ? CustomColors.menuBackgroundColor
+                : Colors.transparent,
+            onPressed: () {
+              var menuInfo = Provider.of<MenuInfo>(context, listen: false);
+              menuInfo.updateMenu(currentMenuInfo);
+            },
+            child: Column(
+              children: [
+                Image.asset(
+                  currentMenuInfo.imageSource,
+                  scale: 1.5,
+                ),
+                Text(
+                  currentMenuInfo.title ?? '',
+                  style: TextStyle(
+                      fontFamily: 'avenir',
+                      color: Colors.white,
+                      fontSize: 14.0),
+                )
+              ],
+            ));
+      },
     );
   }
 }

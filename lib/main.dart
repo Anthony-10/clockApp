@@ -1,4 +1,4 @@
-import 'package:clock_app/home_page/view/enum.dart';
+ import 'package:clock_app/home_page/view/enum.dart';
 import 'package:clock_app/home_page/view/menu_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -13,7 +13,7 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
   WidgetsFlutterBinding.ensureInitialized();
 
   var initializationSettingsAndroid =
-  AndroidInitializationSettings('codex_logo');
+  AndroidInitializationSettings('icon_logo');
   var initializationSettingsIOS = IOSInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,

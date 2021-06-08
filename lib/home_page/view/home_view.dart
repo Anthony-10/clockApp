@@ -45,7 +45,7 @@ class _HomeViewState extends State<HomeView> {
                     text: TextSpan(
                         style: TextStyle(fontSize: 20),
                         children: <TextSpan>[
-                          TextSpan(text: 'Upcoming Tutorial\n'),
+                          TextSpan(text: 'Updated Soon\n'),
                           TextSpan(
                               text: value.title,
                               style: TextStyle(fontSize: 48.0))

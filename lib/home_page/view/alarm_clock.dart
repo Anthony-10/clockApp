@@ -1,7 +1,10 @@
 import 'package:clock_app/home_page/constants/theme_data.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import '../../main.dart';
+import 'alarm_info.dart';
 import 'data.dart';
 
 class AlarmPage extends StatefulWidget {
@@ -121,7 +124,9 @@ class _AlarmPageState extends State<AlarmPage> {
                     child: FlatButton(
                       padding: EdgeInsets.symmetric(
                           horizontal: 32.0, vertical: 16.0),
-                      onPressed: () {},
+                      onPressed: () {
+                        scheduleAlarm();
+                      },
                       child: Column(
                         children: [
                           Image.asset(
@@ -144,5 +149,30 @@ class _AlarmPageState extends State<AlarmPage> {
         ],
       ),
     );
+  }
+
+  void scheduleAlarm() async {
+    var scheduledNotificationDateTime =
+        DateTime.now().add(Duration(seconds: 10));
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'alarm_notif',
+      'alarm_notif',
+      'Channel for Alarm notification',
+      icon: 'icon_logo',
+      sound: RawResourceAndroidNotificationSound('a_long_cold_sting'),
+      largeIcon: DrawableResourceAndroidBitmap('icon_logo'),
+    );
+
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails(
+        sound: 'a_long_cold_sting.wav',
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true);
+    var platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+        iOS: iOSPlatformChannelSpecifics);
+
+    await flutterLocalNotificationsPlugin.schedule(0, 'Office', 'Good people',
+        scheduledNotificationDateTime, platformChannelSpecifics);
   }
 }
